@@ -24,27 +24,9 @@ export type EsignRequestMeta = {
   status: "pending" | "completed";
 };
 
-const STORAGE_KEY = "pdf-project:esign-requests";
-
-export function listEsignRequests(): EsignRequestMeta[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as EsignRequestMeta[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-export function saveEsignRequest(meta: EsignRequestMeta) {
-  const all = listEsignRequests().filter((r) => r.id !== meta.id);
-  all.unshift(meta);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(all.slice(0, 50)));
-}
-
 /**
  * Build a signing package: cover page + original pages + signature boxes as form fields.
- * True email delivery needs backend later — this prepares the PDF to send manually.
+ * Metadata is persisted to MongoDB (sabir.esign_requests) by the UI.
  */
 export async function buildEsignRequestPdf(
   bytes: Uint8Array,

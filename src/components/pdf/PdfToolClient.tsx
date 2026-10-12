@@ -24,7 +24,9 @@ import WatermarkTool from "@/components/pdf/WatermarkTool";
 import type { PdfToolDef } from "@/lib/pdf/registry";
 
 export default function PdfToolClient({ tool }: { tool: PdfToolDef }) {
-  if (tool.mode === "stub") return <StubTool />;
+  if (tool.mode === "stub") {
+    return <StubTool slug={tool.slug} title={tool.title} />;
+  }
 
   switch (tool.slug) {
     case "merge":
@@ -68,6 +70,6 @@ export default function PdfToolClient({ tool }: { tool: PdfToolDef }) {
     case "crop":
       return <CropTool />;
     default:
-      return <StubTool />;
+      return <StubTool slug={tool.slug} title={tool.title} />;
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useFavorites } from "@/context";
+import { logConverterRun } from "@/lib/client/persist";
 import { getConverter } from "@/lib/converters";
 import { CURRENCY_CODES, convertCurrency } from "@/lib/converters/rates";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -50,6 +51,19 @@ export default function ConverterForm({ slug }: Props) {
       swapped ? converter.convertInverse(numeric) : converter.convert(numeric)
     );
   }, [value, numeric, isMulti, fromCode, toCode, swapped, converter]);
+
+  useEffect(() => {
+    if (!result) return;
+    const t = setTimeout(() => {
+      logConverterRun({
+        slug,
+        title: converter?.title,
+        input: numeric,
+        output: result,
+      });
+    }, 400);
+    return () => clearTimeout(t);
+  }, [result, slug, numeric, converter?.title]);
 
   const syncUrl = useCallback(
     (next: { v?: string; from?: string; to?: string }) => {

@@ -4,11 +4,14 @@ import UploadZone from "@/components/tools/UploadZone";
 import { useFavorites } from "@/context";
 import { downloadBytes, fileToBytes } from "@/lib/pdf/download";
 import {
+  fetchEsignRequests,
+  saveEsignRequestRemote,
+} from "@/lib/client/persist";
+import {
   buildEsignRequestPdf,
-  listEsignRequests,
-  saveEsignRequest,
   type Signer,
   type SignatureSlot,
+  type EsignRequestMeta,
 } from "@/lib/pdf/esignRequest";
 import { loadPdfDocument } from "@/lib/pdf/pdfjs";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -32,13 +35,28 @@ export default function EsignRequestTool() {
   );
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [saved, setSaved] = useState(listEsignRequests());
+  const [saved, setSaved] = useState<EsignRequestMeta[]>([]);
   const previewRef = useRef<HTMLCanvasElement>(null);
   const { addRecent } = useFavorites();
 
   useEffect(() => {
     addRecent("pdf:esign-request");
   }, [addRecent]);
+
+  useEffect(() => {
+    void fetchEsignRequests().then((list) =>
+      setSaved(
+        list.map((r) => ({
+          id: r.id,
+          createdAt: r.createdAt,
+          title: r.title,
+          message: r.message || "",
+          signers: r.signers,
+          status: (r.status as "pending" | "completed") || "pending",
+        }))
+      )
+    );
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -138,8 +156,18 @@ export default function EsignRequestTool() {
         signers: cleanSigners,
         slots: slotsWithCover,
       });
-      saveEsignRequest(meta);
-      setSaved(listEsignRequests());
+      await saveEsignRequestRemote({ ...meta, slots: slotsWithCover });
+      const list = await fetchEsignRequests();
+      setSaved(
+        list.map((r) => ({
+          id: r.id,
+          createdAt: r.createdAt,
+          title: r.title,
+          message: r.message || "",
+          signers: r.signers,
+          status: (r.status as "pending" | "completed") || "pending",
+        }))
+      );
       downloadBytes(pdf, "signature-request.pdf");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to build request.");
@@ -152,8 +180,8 @@ export default function EsignRequestTool() {
     <div className="space-y-4">
       <UploadZone files={files} onChange={setFiles} />
       <div className="rounded-xl border border-[var(--brand)]/20 bg-[var(--brand-soft)] px-4 py-3 text-sm text-[var(--brand-dark)]">
-        Prepares a signing PDF with signature boxes + cover sheet. Email the file to
-        signers yourself (server email / e-sign API comes later).
+        Builds a signing PDF and stores the request in MongoDB (<code>sabir.esign_requests</code>).
+        Email delivery to signers can be added later.
       </div>
 
       <label className="block text-sm">
@@ -263,7 +291,7 @@ export default function EsignRequestTool() {
 
       {saved.length > 0 && (
         <div className="rounded-xl border border-gray-200 bg-white p-4 text-sm">
-          <p className="mb-2 font-medium">Recent local requests</p>
+          <p className="mb-2 font-medium">Saved requests (database)</p>
           <ul className="space-y-1 text-[var(--gray-muted)]">
             {saved.slice(0, 5).map((r) => (
               <li key={r.id}>

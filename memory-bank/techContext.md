@@ -13,6 +13,12 @@ npm test
 npm run build
 ```
 
-## Env (example only)
+## Env (example only — never commit real `.env`)
 - `NEXT_PUBLIC_API_URL`
 - `NEXT_PUBLIC_SITE_URL`
+- `MONGODB_URI` → Atlas `tutor1` / database **sabir**
+- `MONGODB_DB` → default `sabir`
+
+## Mongo
+- Helper: `src/lib/db/mongodb.ts` (`getDb()`)
+- Health: `GET /api/health/db`

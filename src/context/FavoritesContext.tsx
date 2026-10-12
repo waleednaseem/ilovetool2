@@ -1,5 +1,6 @@
 "use client";
 
+import { logToolRun, syncFavorite, syncRecent } from "@/lib/client/persist";
 import {
   createContext,
   useCallback,
@@ -9,6 +10,11 @@ import {
   useState,
   type ReactNode,
 } from "react";
+
+function parseToolId(id: string): { family: string; slug: string } {
+  const [family, ...rest] = id.split(":");
+  return { family: family || "unknown", slug: rest.join(":") || id };
+}
 
 const FAVORITES_KEY = "pdf-project:favorites";
 const RECENT_KEY = "pdf-project:recent";
@@ -38,15 +44,44 @@ function readList(key: string): string[] {
   }
 }
 
+function mergeUnique(primary: string[], secondary: string[], max?: number) {
+  const out = [...primary];
+  for (const id of secondary) {
+    if (!out.includes(id)) out.push(id);
+  }
+  return max ? out.slice(0, max) : out;
+}
+
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recent, setRecent] = useState<string[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setFavorites(readList(FAVORITES_KEY));
-    setRecent(readList(RECENT_KEY));
+    const localFav = readList(FAVORITES_KEY);
+    const localRecent = readList(RECENT_KEY);
+    setFavorites(localFav);
+    setRecent(localRecent);
     setHydrated(true);
+
+    void (async () => {
+      try {
+        const [favRes, recentRes] = await Promise.all([
+          fetch("/api/favorites").then((r) => r.json()),
+          fetch("/api/recent").then((r) => r.json()),
+        ]);
+        if (favRes?.ok && Array.isArray(favRes.favorites)) {
+          setFavorites((prev) => mergeUnique(favRes.favorites, prev));
+        }
+        if (recentRes?.ok && Array.isArray(recentRes.recent)) {
+          setRecent((prev) =>
+            mergeUnique(recentRes.recent, prev, MAX_RECENT)
+          );
+        }
+      } catch {
+        /* offline / API down — keep local */
+      }
+    })();
   }, []);
 
   useEffect(() => {
@@ -60,9 +95,11 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   }, [recent, hydrated]);
 
   const toggleFavorite = useCallback((id: string) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+    setFavorites((prev) => {
+      const removing = prev.includes(id);
+      syncFavorite(id, removing ? "remove" : "add");
+      return removing ? prev.filter((x) => x !== id) : [...prev, id];
+    });
   }, []);
 
   const isFavorite = useCallback(
@@ -71,6 +108,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   );
 
   const addRecent = useCallback((id: string) => {
+    const { family, slug } = parseToolId(id);
+    logToolRun({ family, slug, source: "recent" });
+    syncRecent(id);
     setRecent((prev) => {
       const next = [id, ...prev.filter((x) => x !== id)];
       return next.slice(0, MAX_RECENT);
