@@ -1,0 +1,21 @@
+// Paste into Runtime.evaluate after navigate — upload PDF and report UI health
+(async () => {
+  const res = await fetch('/sample-unsigned.pdf');
+  const buf = await res.arrayBuffer();
+  const file = new File([buf], 'sample-unsigned.pdf', { type: 'application/pdf' });
+  const inputs = [...document.querySelectorAll('input[type=file]')];
+  const pdfInput = inputs.find(i => !i.accept || i.accept.includes('pdf') || i.accept.includes('*')) || inputs[0];
+  if (!pdfInput) return { ok: false, reason: 'no file input' };
+  const dt = new DataTransfer();
+  dt.items.add(file);
+  Object.defineProperty(pdfInput, 'files', { value: dt.files, configurable: true });
+  pdfInput.dispatchEvent(new Event('change', { bubbles: true }));
+  await new Promise(r => setTimeout(r, 2200));
+  const text = document.body.innerText;
+  const err = [...document.querySelectorAll('p,div,span')].map(e => e.textContent || '').find(t => /fail|error|could not|unexpected/i.test(t) && t.length < 120) || null;
+  const buttons = [...document.querySelectorAll('button')].map(b => ({ label: (b.innerText||'').trim().slice(0,60), disabled: b.disabled }));
+  const listed = /sample-unsigned|1 file|file selected|PDF/i.test(text);
+  const title = document.querySelector('h1')?.textContent?.trim() || '';
+  const comingSoon = /Coming soon/i.test(text);
+  return { ok: !err && (listed || comingSoon), title, listed, comingSoon, err, buttons: buttons.filter(b => b.label), url: location.pathname };
+})()

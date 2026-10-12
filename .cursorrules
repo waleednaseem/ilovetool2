@@ -1,0 +1,8 @@
+# PDF Project — Cursor Rules
+
+- Frontend-only for now (no backend)
+- State: Context API (`src/context`)
+- HTTP: Axios via `src/services/api.ts`
+- Never read or modify `.env`
+- Never touch Docker/Dockerfile
+- Keep replies to user short (Roman Urdu); app UI text in English
