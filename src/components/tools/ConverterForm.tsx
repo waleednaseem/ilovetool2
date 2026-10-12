@@ -123,28 +123,30 @@ export default function ConverterForm({ slug }: Props) {
   const favId = `convert:${slug}`;
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div className="rounded-[16px] border border-[var(--gray-border)] bg-white p-6 shadow-[var(--shadow-md)]">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{converter.title}</h1>
+        <h1 className="font-heading text-2xl font-extrabold tracking-tight">
+          {converter.title}
+        </h1>
         <button
           type="button"
           onClick={() => toggleFavorite(favId)}
-          className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm hover:border-teal-700"
+          className="rounded-full border border-[var(--gray-border)] px-3.5 py-1.5 text-sm font-semibold hover:border-[var(--brand)] hover:text-[var(--brand)]"
           aria-pressed={isFavorite(favId)}
         >
           {isFavorite(favId) ? "★ Saved" : "☆ Save"}
         </button>
       </div>
-      <p className="mb-6 text-zinc-600">{converter.description}</p>
+      <p className="mb-6 text-[var(--gray-muted)]">{converter.description}</p>
 
       <div className="grid gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-end">
         <label className="block">
-          <span className="mb-1 block text-sm font-medium text-zinc-700">
+          <span className="mb-1.5 block text-sm font-semibold text-[var(--text-secondary)]">
             {fromLabel} ({fromUnit})
           </span>
           {isMulti && (
             <select
-              className="mb-2 w-full rounded-lg border border-zinc-300 px-3 py-2"
+              className="mb-2 w-full rounded-xl border border-[var(--gray-border)] px-3 py-2.5 outline-none focus:border-[var(--brand)]"
               value={fromCode}
               onChange={(e) => {
                 setFromCode(e.target.value);
@@ -161,7 +163,7 @@ export default function ConverterForm({ slug }: Props) {
           <input
             type="number"
             inputMode="decimal"
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-lg"
+            className="w-full rounded-xl border border-[var(--gray-border)] px-3 py-3 text-lg outline-none focus:border-[var(--brand)] focus:shadow-[var(--glow-primary)]"
             value={value}
             onChange={(e) => handleValue(e.target.value)}
           />
@@ -170,19 +172,19 @@ export default function ConverterForm({ slug }: Props) {
         <button
           type="button"
           onClick={handleSwap}
-          className="mx-auto h-10 w-10 rounded-full border border-zinc-300 text-zinc-700 hover:border-teal-700"
+          className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-[var(--gray-border)] bg-[var(--background)] text-[var(--foreground)] transition hover:border-[var(--brand)] hover:text-[var(--brand)]"
           aria-label="Swap units"
         >
           ⇄
         </button>
 
         <label className="block">
-          <span className="mb-1 block text-sm font-medium text-zinc-700">
+          <span className="mb-1.5 block text-sm font-semibold text-[var(--text-secondary)]">
             {toLabel} ({toUnit})
           </span>
           {isMulti && (
             <select
-              className="mb-2 w-full rounded-lg border border-zinc-300 px-3 py-2"
+              className="mb-2 w-full rounded-xl border border-[var(--gray-border)] px-3 py-2.5 outline-none focus:border-[var(--brand)]"
               value={toCode}
               onChange={(e) => {
                 setToCode(e.target.value);
@@ -199,7 +201,7 @@ export default function ConverterForm({ slug }: Props) {
           <input
             type="text"
             readOnly
-            className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-lg"
+            className="w-full rounded-xl border border-[var(--gray-border)] bg-[var(--background)] px-3 py-3 text-lg font-semibold text-[var(--brand-dark)]"
             value={result}
           />
         </label>

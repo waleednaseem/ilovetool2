@@ -1,16 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f0f4f2;
-  --foreground: #0f172a;
-  --brand: #059669;
-  --brand-dark: #047857;
-  --brand-light: #d1fae5;
-  --brand-soft: #ecfdf5;
+  --background: #f5f5fa;
+  --foreground: #161616;
+  --brand: #e5322d;
+  --brand-dark: #c42824;
+  --brand-secondary: #ff4b4b;
+  --brand-light: #ffe8e6;
+  --brand-soft: #fff5f4;
   --surface: #ffffff;
-  --gray-border: #dce5e0;
-  --gray-muted: #64748b;
-  --hero-glow: rgba(16, 185, 129, 0.18);
+  --gray-border: rgba(0, 0, 0, 0.08);
+  --gray-muted: #707070;
+  --text-secondary: #4a4a4a;
+  --gradient-primary: linear-gradient(135deg, #e5322d 0%, #ff4b4b 100%);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+  --glow-primary: 0 4px 12px rgba(229, 50, 45, 0.2);
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --header-height: 72px;
 }
 
 @theme inline {
@@ -20,40 +29,103 @@
   --color-brand-dark: var(--brand-dark);
   --color-brand-light: var(--brand-light);
   --color-brand-soft: var(--brand-soft);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-body);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background:
-    radial-gradient(1200px 500px at 10% -10%, var(--hero-glow), transparent 55%),
-    radial-gradient(900px 400px at 90% 0%, rgba(5, 150, 105, 0.08), transparent 50%),
-    var(--background);
+  background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+::selection {
+  background: rgba(229, 50, 45, 0.18);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.45s ease both;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-heading {
+  font-family: var(--font-heading), var(--font-body), sans-serif;
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: #fff;
+  box-shadow: var(--glow-primary);
+  border-radius: 999px;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(229, 50, 45, 0.28);
+}
+
+.tool-card-surface-pdf {
+  background: linear-gradient(160deg, #fff5f4 0%, #ffffff 55%);
+}
+.tool-card-surface-image {
+  background: linear-gradient(160deg, #eef4ff 0%, #ffffff 55%);
+}
+.tool-card-surface-text {
+  background: linear-gradient(160deg, #fff8eb 0%, #ffffff 55%);
+}
+.tool-card-surface-zip {
+  background: linear-gradient(160deg, #fff3e8 0%, #ffffff 55%);
+}
+.tool-card-surface-other {
+  background: linear-gradient(160deg, #f8eef8 0%, #ffffff 55%);
+}
+.tool-card-surface-convert {
+  background: linear-gradient(160deg, #eaf8ff 0%, #ffffff 55%);
 }
 
 .tool-card-icon-pdf {
-  background: linear-gradient(145deg, #d1fae5, #a7f3d0);
-  color: #065f46;
+  background: linear-gradient(145deg, #ffd4d1, #ffb3ae);
+  color: #9f1c18;
 }
 .tool-card-icon-image {
-  background: linear-gradient(145deg, #e0e7ff, #c7d2fe);
-  color: #3730a3;
+  background: linear-gradient(145deg, #d6e4ff, #adc6ff);
+  color: #1e3a8a;
 }
 .tool-card-icon-text {
-  background: linear-gradient(145deg, #fef3c7, #fde68a);
+  background: linear-gradient(145deg, #ffe8b8, #ffd280);
   color: #92400e;
 }
 .tool-card-icon-zip {
-  background: linear-gradient(145deg, #ffedd5, #fdba74);
+  background: linear-gradient(145deg, #ffd8b5, #ffb77a);
   color: #9a3412;
 }
 .tool-card-icon-other {
-  background: linear-gradient(145deg, #fce7f3, #f9a8d4);
-  color: #9d174d;
+  background: linear-gradient(145deg, #f3d6f3, #e8b4e8);
+  color: #7a1f7a;
 }
 .tool-card-icon-convert {
-  background: linear-gradient(145deg, #e0f2fe, #7dd3fc);
+  background: linear-gradient(145deg, #c9ecff, #8fd4ff);
   color: #075985;
 }

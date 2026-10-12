@@ -8,6 +8,7 @@ type ToolCardProps = {
   badge?: string;
   icon?: string;
   family?: ToolFamily;
+  cta?: string;
 };
 
 const iconClass: Record<ToolFamily, string> = {
@@ -19,6 +20,15 @@ const iconClass: Record<ToolFamily, string> = {
   convert: "tool-card-icon-convert",
 };
 
+const surfaceClass: Record<ToolFamily, string> = {
+  pdf: "tool-card-surface-pdf",
+  image: "tool-card-surface-image",
+  text: "tool-card-surface-text",
+  zip: "tool-card-surface-zip",
+  other: "tool-card-surface-other",
+  convert: "tool-card-surface-convert",
+};
+
 export default function ToolCard({
   href,
   title,
@@ -26,30 +36,34 @@ export default function ToolCard({
   badge,
   icon = "PDF",
   family = "pdf",
+  cta = "Open →",
 }: ToolCardProps) {
   return (
     <Link
       href={href}
-      className="group block rounded-2xl border border-[var(--gray-border)] bg-[var(--surface)] p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition duration-200 hover:-translate-y-1 hover:border-[var(--brand)]/35 hover:shadow-[0_12px_28px_rgba(5,150,105,0.12)]"
+      className={`group flex h-full flex-col rounded-[var(--radius-lg)] border border-[var(--gray-border)] p-5 shadow-[var(--shadow-sm)] transition duration-200 hover:-translate-y-1 hover:border-[rgba(229,50,45,0.28)] hover:shadow-[var(--shadow-md)] ${surfaceClass[family]}`}
     >
-      <div
-        className={`mb-3 flex h-12 w-12 items-center justify-center rounded-2xl text-xs font-bold tracking-wide ${iconClass[family]}`}
-      >
-        {icon.slice(0, 3).toUpperCase()}
-      </div>
-      <div className="mb-1.5 flex items-start justify-between gap-2">
-        <h3 className="text-base font-semibold text-gray-900 transition-colors group-hover:text-[var(--brand-dark)]">
-          {title}
-        </h3>
+      <div className="mb-4 flex items-start justify-between gap-2">
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-2xl text-xs font-extrabold tracking-wide shadow-sm ${iconClass[family]}`}
+        >
+          {icon.slice(0, 3).toUpperCase()}
+        </div>
         {badge && (
-          <span className="shrink-0 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-800">
+          <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
             {badge}
           </span>
         )}
       </div>
-      <p className="text-sm leading-relaxed text-[var(--gray-muted)]">
+      <h3 className="font-heading text-base font-bold text-[var(--foreground)] transition-colors group-hover:text-[var(--brand)]">
+        {title}
+      </h3>
+      <p className="mt-1.5 flex-1 text-sm leading-relaxed text-[var(--gray-muted)]">
         {description}
       </p>
+      <span className="mt-4 text-sm font-bold text-[var(--brand)] opacity-90 group-hover:opacity-100">
+        {cta}
+      </span>
     </Link>
   );
 }

@@ -86,15 +86,17 @@ export function getHomeSections() {
       family: "pdf" as const,
       title: "PDF Tools",
       href: "/tools/pdf",
-      tools: getFeaturedPdfTools().map((t) => ({
-        slug: t.slug,
-        title: t.title,
-        description: t.description,
-        family: "pdf" as const,
-        href: `/tools/pdf/${t.slug}`,
-        icon: "PDF",
-        featured: t.featured,
-      })),
+      tools: getFeaturedPdfTools()
+        .slice(0, 8)
+        .map((t) => ({
+          slug: t.slug,
+          title: t.title,
+          description: t.description,
+          family: "pdf" as const,
+          href: `/tools/pdf/${t.slug}`,
+          icon: "PDF",
+          featured: t.featured,
+        })),
     },
     {
       family: "image" as const,

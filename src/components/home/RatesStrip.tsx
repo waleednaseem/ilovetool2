@@ -4,16 +4,28 @@ const DISPLAY = ["USD", "EUR", "GBP", "AED", "SAR"] as const;
 
 export default function RatesStrip() {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-[var(--brand)]/20 bg-[var(--brand)] text-white">
-      <div className="flex min-w-max items-center gap-6 px-4 py-3 text-sm">
-        <span className="font-semibold tracking-wide">Today&apos;s PKR rates</span>
+    <div className="rounded-[16px] border border-[var(--gray-border)] bg-white p-3 shadow-[var(--shadow-sm)] sm:p-4">
+      <div className="mb-2 flex items-center justify-between gap-2 px-1">
+        <p className="font-heading text-sm font-bold text-[var(--foreground)]">
+          Today&apos;s PKR rates
+        </p>
+        <span className="text-[11px] text-[var(--gray-muted)]">Static · live later</span>
+      </div>
+      <div className="flex gap-2 overflow-x-auto pb-1">
         {DISPLAY.map((code) => (
-          <span key={code} className="whitespace-nowrap">
-            <span className="text-white/70">1 {code}</span>{" "}
-            <span className="font-medium">= {FX_TO_PKR[code].toFixed(2)} PKR</span>
-          </span>
+          <div
+            key={code}
+            className="min-w-[118px] shrink-0 rounded-xl bg-[var(--background)] px-3 py-2.5"
+          >
+            <p className="text-[11px] font-semibold text-[var(--gray-muted)]">
+              1 {code}
+            </p>
+            <p className="font-heading text-sm font-bold text-[var(--foreground)]">
+              {FX_TO_PKR[code].toFixed(2)}{" "}
+              <span className="text-xs font-semibold text-[var(--brand)]">PKR</span>
+            </p>
+          </div>
         ))}
-        <span className="text-xs text-white/60">Static rates · live API later</span>
       </div>
     </div>
   );

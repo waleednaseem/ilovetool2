@@ -1,3 +1,4 @@
+import Breadcrumbs from "@/components/tools/Breadcrumbs";
 import ConverterForm from "@/components/tools/ConverterForm";
 import ToolCard from "@/components/tools/ToolCard";
 import {
@@ -39,14 +40,27 @@ export default async function ConverterPage({ params }: Props) {
   const related = getRelatedConverters(slug);
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
-      <Suspense fallback={<div className="rounded-2xl border bg-white p-6">Loading…</div>}>
+    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:py-10">
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Converters", href: "/convert" },
+          { label: converter.title },
+        ]}
+      />
+      <Suspense
+        fallback={
+          <div className="rounded-[16px] border border-[var(--gray-border)] bg-white p-6 shadow-[var(--shadow-sm)]">
+            Loading…
+          </div>
+        }
+      >
         <ConverterForm slug={converter.slug} />
       </Suspense>
 
       {related.length > 0 && (
         <section className="mt-10">
-          <h2 className="mb-4 text-lg font-semibold">Related converters</h2>
+          <h2 className="font-heading mb-4 text-lg font-bold">Related converters</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {related.map((c) => (
               <ToolCard
@@ -54,15 +68,20 @@ export default async function ConverterPage({ params }: Props) {
                 href={`/convert/${c.slug}`}
                 title={c.title}
                 description={c.description}
+                family="convert"
+                icon={c.fromUnit.slice(0, 3).toUpperCase()}
               />
             ))}
           </div>
         </section>
       )}
 
-      <p className="mt-8 text-sm text-zinc-500">
+      <p className="mt-8 text-sm text-[var(--gray-muted)]">
         Working with documents? Try{" "}
-        <Link href="/tools/pdf" className="font-medium text-teal-800 hover:underline">
+        <Link
+          href="/tools/pdf"
+          className="font-semibold text-[var(--brand)] hover:underline"
+        >
           PDF tools
         </Link>{" "}
         — merge, split, sign, and fill forms.

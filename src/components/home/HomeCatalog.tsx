@@ -38,24 +38,38 @@ export default function HomeCatalog() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10">
-      <div className="mb-8 rounded-2xl border border-[var(--gray-border)] bg-white/80 p-4 shadow-sm backdrop-blur sm:p-5">
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search tools…"
-          className="mb-4 w-full rounded-xl border border-[var(--gray-border)] bg-white px-4 py-3 text-sm outline-none ring-[var(--brand)] focus:ring-2"
-        />
-        <div className="flex flex-wrap gap-2">
+      <div className="mb-10 overflow-hidden rounded-[20px] border border-[var(--gray-border)] bg-white p-4 shadow-[var(--shadow-md)] sm:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gray-muted)]">
+              ⌕
+            </span>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search tools... (e.g. PDF, Image)"
+              className="w-full rounded-full border border-[var(--gray-border)] bg-[var(--background)] py-3.5 pl-10 pr-4 text-sm outline-none transition focus:border-[var(--brand)] focus:bg-white focus:shadow-[var(--glow-primary)]"
+            />
+          </div>
+          <button
+            type="button"
+            className="btn-primary px-7 py-3.5 text-sm"
+            onClick={() => setFamily("all")}
+          >
+            Search
+          </button>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
           {pills.map((id) => (
             <button
               key={id}
               type="button"
               onClick={() => setFamily(id)}
-              className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
+              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
                 family === id
-                  ? "bg-[var(--brand)] text-white shadow-sm"
-                  : "bg-[var(--brand-soft)] text-[var(--brand-dark)] hover:bg-[var(--brand-light)]"
+                  ? "bg-[var(--brand)] text-white shadow-[var(--glow-primary)]"
+                  : "border border-[var(--gray-border)] bg-white text-[var(--text-secondary)] hover:border-[var(--brand)]/40 hover:text-[var(--brand)]"
               }`}
             >
               {familyLabels[id]}
@@ -66,10 +80,10 @@ export default function HomeCatalog() {
 
       {searching ? (
         <section>
-          <h2 className="mb-5 text-2xl font-bold tracking-tight text-gray-900">
+          <h2 className="font-heading mb-5 text-2xl font-extrabold tracking-tight">
             {filtered.length} tool{filtered.length === 1 ? "" : "s"}
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filtered.map((t) => (
               <ToolCard
                 key={`${t.family}-${t.slug}`}
@@ -78,29 +92,32 @@ export default function HomeCatalog() {
                 description={t.description}
                 icon={t.icon}
                 family={t.family}
+                cta="Open →"
               />
             ))}
           </div>
           {filtered.length === 0 && (
-            <p className="text-sm text-[var(--gray-muted)]">No tools match your search.</p>
+            <p className="text-sm text-[var(--gray-muted)]">
+              No tools match your search.
+            </p>
           )}
         </section>
       ) : (
         <div className="space-y-14">
           {sections.map((section) => (
-            <section key={section.family}>
+            <section key={section.family} id={section.family}>
               <div className="mb-5 flex items-end justify-between gap-4">
-                <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+                <h2 className="font-heading text-2xl font-extrabold tracking-tight">
                   {section.title}
                 </h2>
                 <Link
                   href={section.href}
-                  className="text-sm font-semibold text-[var(--brand)] hover:underline"
+                  className="text-sm font-bold text-[var(--brand)] hover:underline"
                 >
-                  See all →
+                  See All ›
                 </Link>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {section.tools.map((t) => (
                   <ToolCard
                     key={t.slug}
@@ -109,6 +126,7 @@ export default function HomeCatalog() {
                     description={t.description}
                     icon={t.icon}
                     family={t.family}
+                    cta="Open →"
                   />
                 ))}
               </div>

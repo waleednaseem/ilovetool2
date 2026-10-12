@@ -8,7 +8,14 @@ type Props = {
   files: File[];
   onChange: (files: File[]) => void;
   label?: string;
+  hint?: string;
 };
+
+function formatSize(n: number) {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 export default function UploadZone({
   multiple = false,
@@ -16,6 +23,7 @@ export default function UploadZone({
   files,
   onChange,
   label = "Drop PDF here or click to browse",
+  hint = "PDF only · processed in your browser",
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -27,7 +35,8 @@ export default function UploadZone({
         (f) =>
           f.type === "application/pdf" ||
           f.name.toLowerCase().endsWith(".pdf") ||
-          accept.includes("image")
+          accept.includes("image") ||
+          accept.includes("*")
       );
       if (!next.length) return;
       onChange(multiple ? [...files, ...next] : [next[0]]);
@@ -50,14 +59,19 @@ export default function UploadZone({
           setDragging(false);
           takeFiles(e.dataTransfer.files);
         }}
-        className={`flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-10 text-center transition ${
+        className={`flex w-full flex-col items-center justify-center rounded-[16px] border-2 border-dashed px-4 py-11 text-center transition ${
           dragging
-            ? "border-teal-600 bg-teal-50"
-            : "border-zinc-300 bg-zinc-50 hover:border-teal-600/50"
+            ? "border-[var(--brand)] bg-[var(--brand-soft)]"
+            : "border-[var(--gray-border)] bg-[var(--background)] hover:border-[var(--brand)]/45 hover:bg-[var(--brand-soft)]/40"
         }`}
       >
-        <span className="text-sm font-medium text-zinc-700">{label}</span>
-        <span className="mt-1 text-xs text-zinc-500">PDF only · processed in your browser</span>
+        <span className="mb-2 flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-lg shadow-[var(--shadow-sm)]">
+          ↑
+        </span>
+        <span className="text-sm font-semibold text-[var(--foreground)]">
+          {label}
+        </span>
+        <span className="mt-1 text-xs text-[var(--gray-muted)]">{hint}</span>
       </button>
       <input
         ref={inputRef}
@@ -71,13 +85,23 @@ export default function UploadZone({
         }}
       />
       {files.length > 0 && (
-        <ul className="mt-3 space-y-1 text-sm text-zinc-600">
+        <ul className="mt-3 space-y-2">
           {files.map((f, i) => (
-            <li key={`${f.name}-${i}`} className="flex items-center justify-between gap-2">
-              <span className="truncate">{f.name}</span>
+            <li
+              key={`${f.name}-${i}`}
+              className="flex items-center justify-between gap-3 rounded-xl border border-[var(--gray-border)] bg-white px-3 py-2.5 text-sm shadow-[var(--shadow-sm)]"
+            >
+              <div className="min-w-0">
+                <p className="truncate font-medium text-[var(--foreground)]">
+                  {f.name}
+                </p>
+                <p className="text-xs text-[var(--gray-muted)]">
+                  {formatSize(f.size)}
+                </p>
+              </div>
               <button
                 type="button"
-                className="text-xs text-red-600 hover:underline"
+                className="shrink-0 rounded-lg px-2 py-1 text-xs font-semibold text-[var(--brand)] hover:bg-[var(--brand-soft)]"
                 onClick={() => onChange(files.filter((_, idx) => idx !== i))}
               >
                 Remove
