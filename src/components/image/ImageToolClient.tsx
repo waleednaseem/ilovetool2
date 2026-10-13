@@ -1,5 +1,6 @@
 "use client";
 
+import ImageCropPreview from "@/components/image/ImageCropPreview";
 import { useFavorites } from "@/context";
 import { downloadBlob } from "@/lib/downloadBlob";
 import {
@@ -151,30 +152,13 @@ export default function ImageToolClient({ tool }: { tool: ImageToolDef }) {
         </div>
       )}
 
-      {tool.slug === "crop" && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {(
-            [
-              ["x", "X"],
-              ["y", "Y"],
-              ["w", "Width"],
-              ["h", "Height"],
-            ] as const
-          ).map(([key, label]) => (
-            <label key={key} className="text-sm">
-              {label}
-              <input
-                type="number"
-                min={0}
-                value={crop[key]}
-                onChange={(e) =>
-                  setCrop((c) => ({ ...c, [key]: Number(e.target.value) || 0 }))
-                }
-                className="mt-1 w-full rounded-lg border border-[var(--gray-border)] px-3 py-2"
-              />
-            </label>
-          ))}
-        </div>
+      {tool.slug === "crop" && file && (
+        <ImageCropPreview file={file} crop={crop} onChange={setCrop} />
+      )}
+      {tool.slug === "crop" && !file && (
+        <p className="text-sm text-[var(--gray-muted)]">
+          Upload an image to see a preview and drag to crop.
+        </p>
       )}
 
       {tool.slug === "rotate" && (

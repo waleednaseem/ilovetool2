@@ -31,13 +31,21 @@ export default function UploadZone({
   const takeFiles = useCallback(
     (list: FileList | null) => {
       if (!list?.length) return;
-      const next = Array.from(list).filter(
-        (f) =>
+      const pdfOnly =
+        accept === "application/pdf" ||
+        (accept.includes("pdf") &&
+          !accept.includes("doc") &&
+          !accept.includes("xls") &&
+          !accept.includes("ppt") &&
+          !accept.includes("image") &&
+          !accept.includes("*"));
+      const next = Array.from(list).filter((f) => {
+        if (!pdfOnly) return true;
+        return (
           f.type === "application/pdf" ||
-          f.name.toLowerCase().endsWith(".pdf") ||
-          accept.includes("image") ||
-          accept.includes("*")
-      );
+          f.name.toLowerCase().endsWith(".pdf")
+        );
+      });
       if (!next.length) return;
       onChange(multiple ? [...files, ...next] : [next[0]]);
     },

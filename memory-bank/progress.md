@@ -1,13 +1,14 @@
 # Progress
 
 ## Done
-- [x] Unit converters + PDF/image/text/zip/other client tools
-- [x] MongoDB `sabir` on `tutor1` via `MONGODB_URI`
-- [x] DB features: tool_runs, converter_runs, favorites, recent
-- [x] Stub tools → queue into `pdf_jobs` (metadata)
-- [x] E-sign requests → `esign_requests` (not localStorage)
-- [x] Protect encrypt → queue job (AES still needs processing API)
-- [x] Favorites/recent hydrate from MongoDB
+- [x] All PDF tools `mode: client` (no stubs)
+- [x] Protect encrypt + Crop Image preview
+- [x] pdfjs legacy worker + toHex polyfill (Playwright / older Chromium)
+- [x] E2E green on `:3001`:
+  - functional-e2e 53/53
+  - functional-e2e-extra 15/15
+  - live-ui-e2e 77/77
 
-## Still needs processing API (not DB)
-- [ ] Compress / Repair / Compare / Office convert / OCR / Redact / HTML→PDF / PDF/A / Markdown / AI / Scan / real AES encrypt / Workflows
+## Notes
+- Port 3000 may be another app; use `npx next dev -p 3001`
+- Office / PDF/A / translate are best-effort browser conversions
