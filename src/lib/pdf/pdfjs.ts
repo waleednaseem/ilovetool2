@@ -4,13 +4,15 @@ import {
   GlobalWorkerOptions,
   getDocument,
   type PDFDocumentProxy,
-} from "pdfjs-dist";
+} from "pdfjs-dist/legacy/build/pdf.mjs";
+import { ensurePdfjsPolyfills } from "./polyfills";
 
 let workerReady = false;
 
 export function ensurePdfjsWorker() {
+  ensurePdfjsPolyfills();
   if (workerReady || typeof window === "undefined") return;
-  // Prefer local worker (avoids CDN / CORS issues)
+  // Legacy worker includes runtime polyfills (toHex, etc.)
   GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
   workerReady = true;
 }

@@ -15,7 +15,7 @@ export default function PdfToolsIndexPage() {
           Every PDF tool you need
         </h1>
         <p className="mt-2 text-[var(--gray-muted)]">
-          Client tools run in your browser. Tools marked Soon use the API when ready.
+          All tools run in your browser — upload a file and download the result.
         </p>
       </div>
       <PdfToolsBrowser />

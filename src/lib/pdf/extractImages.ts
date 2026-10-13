@@ -1,6 +1,6 @@
 "use client";
 
-import { OPS } from "pdfjs-dist";
+import { OPS } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { loadPdfDocument } from "./pdfjs";
 
 export type ExtractedImage = {

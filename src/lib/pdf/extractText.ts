@@ -1,10 +1,16 @@
-import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
+import { getDocument, GlobalWorkerOptions } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { ensurePdfjsPolyfills } from "./polyfills";
 
 if (typeof window !== "undefined") {
+  ensurePdfjsPolyfills();
   GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 }
 
 export async function extractTextFromPdf(bytes: Uint8Array): Promise<string> {
+  ensurePdfjsPolyfills();
+  if (typeof window !== "undefined") {
+    GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+  }
   const copy = new Uint8Array(bytes);
   const loadingTask = getDocument({ data: copy });
   const pdf = await loadingTask.promise;

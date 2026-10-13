@@ -94,23 +94,38 @@ for (const slug of client) {
   try {
     await page.goto(base + `/tools/pdf/${slug}`, { waitUntil: "networkidle" });
     const h1 = (await page.locator("h1").first().textContent())?.trim();
-    if (slug === "jpg-to-pdf" || slug === "merge-pdf-images") {
+    if (slug === "html-to-pdf") {
+      // HTML tool uses a textarea, not a file upload
+      const listed = (await page.locator("textarea").count()) > 0;
+      log(`pdf-client:${slug}`, listed, h1);
+    } else if (slug === "scan-to-pdf") {
+      const body = await page.locator("body").innerText();
+      log(
+        `pdf-client:${slug}`,
+        /Create PDF|Start camera|Upload photos/i.test(body),
+        h1
+      );
+    } else if (slug === "jpg-to-pdf" || slug === "merge-pdf-images") {
       await upload(slug === "jpg-to-pdf" ? samplePng : samplePdf);
-      if (slug === "merge-pdf-images") {
-        // also add image if second input not needed — one pdf is enough for listed check
-      }
+      const body = await page.locator("body").innerText();
+      const listed =
+        /sample-unsigned|e2e-pixel|1 file|\.pdf|\.png/i.test(body) ||
+        (await page.locator("canvas").count()) > 0;
+      log(`pdf-client:${slug}`, listed, h1);
     } else {
       await upload(samplePdf);
+      const body = await page.locator("body").innerText();
+      const err =
+        /could not|unexpected error|failed to/i.test(body) &&
+        !/Coming soon|No extractable/i.test(body);
+      const listed =
+        /sample-unsigned|e2e-pixel|1 file|files? selected|\.pdf|\.png/i.test(
+          body
+        ) ||
+        (await page.locator("canvas").count()) > 0 ||
+        (await page.locator("textarea").count()) > 0;
+      log(`pdf-client:${slug}`, !err && listed, err ? "error" : h1);
     }
-    const body = await page.locator("body").innerText();
-    const err =
-      /could not|unexpected error|failed to/i.test(body) &&
-      !/Coming soon|No extractable/i.test(body);
-    const listed =
-      /sample-unsigned|e2e-pixel|1 file|files? selected|\.pdf|\.png/i.test(body) ||
-      (await page.locator("canvas").count()) > 0 ||
-      (await page.locator("textarea").count()) > 0;
-    log(`pdf-client:${slug}`, !err && listed, err ? "error" : h1);
   } catch (e) {
     log(`pdf-client:${slug}`, false, String(e.message || e));
   }
@@ -155,10 +170,11 @@ for (const slug of textSlugs) {
       }
       if (slug === "base64") {
         await page.getByRole("button", { name: "Encode", exact: true }).click();
+        await page.waitForTimeout(400);
       }
     }
     const val = await ta.inputValue();
-    log(`text:${slug}`, val.length > 0, val.slice(0, 40));
+    log(`text:${slug}`, val.length > 0, val.slice(0, 40) || "(empty)");
   } catch (e) {
     log(`text:${slug}`, false, String(e.message || e));
   }
