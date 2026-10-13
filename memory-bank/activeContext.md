@@ -1,7 +1,7 @@
 # Active Context
 
 ## Current focus
-Stub/incomplete PDF tools completed as client tools; Protect encrypt + Crop Image preview fixed.
+iLovePDF-style header: Merge/Split/Compress + Convert mega-menu + All PDF Tools dropdown.
 
 ## Notes
 - Protect: `@pdfsmaller/pdf-encrypt` (AES-256 / RC4), only Protect & download
